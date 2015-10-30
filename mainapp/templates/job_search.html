@@ -1,0 +1,68 @@
+{% if joblist %}
+<div class='panel panel-success'>
+	<div class='panel-heading'>##</div>
+	<div class='panel-body'>
+		共{{ paginator.count }}个职位	
+	</div>
+	{% for job in joblist %}
+	<div class='panel panel-info'>
+		<div class='panel-heading'>
+			<div><a href='{% url 'job' id=job.id %}'>{{job.name}}</a></div><div class='pull-right'>{{job.get_salary_display}}/月</div>
+		</div>
+		<div class='panel-body'>
+			<div class='col-md-3'><small>公司:</small> <big>{{job.company}}</big></div>
+			<div class='col-md-3'><small>地址:</small> <big>{{job.company.address}}</big></div>
+			<div class='col-md-3'><small>人数:</small> <big>{{job.count}}</big></div>
+			<div class='col-md-3'><small>日期:</small> <big>{{job.create_date|date:'Y M d'}}</big></div>
+			<!--<div class='col-md-2'>{{job.technique|truncatewords:5}}</div>-->
+		</div>
+	</div>
+	{% endfor %}
+	<div class="pagination">
+		<span class="step-links">
+			{% if joblist.has_previous %}
+			<a id='previous'>previous</a>
+			{% endif %}
+
+			<span class="current">
+				Page {{ joblist.number }} of {{ paginator.num_pages }}.
+			</span>
+
+			{% if joblist.has_next %}
+			<a id='next'>next</a>
+			{% endif %}
+		</span>
+	</div>
+	<script>
+		// fix it    can not find  '#job' '#company'
+		{% if joblist.has_previous %}
+		$('#previous').click(function(){
+			var key = $(this).prev('input').val();
+			var data;
+			if($('#job').hasClass('active'))
+				data = {'job_key':key};
+			else if($('#company').hasClass('active'))
+				data = {'company_key':key};
+			data['page']={{joblist.previous_page_number}};
+			$.get('{% url 'home' %}',data,function(data){
+				$('#job_search').html(data);
+			});
+		});
+		{% endif %}
+		{% if joblist.has_next %}
+		$('#next').click(function(){
+			var key = $(this).prev('input').val();
+			var data;
+			if($('#job').hasClass('active'))
+				data = {'job_key':key};
+			else if($('#company').hasClass('active'))
+				data = {'company_key':key};
+			data['page']={{joblist.next_page_number}};
+			$.get('{% url 'home' %}',data,function(data){
+				//$('#job_search').html(data);
+			});
+		});
+		{% endif %}
+	</script>
+</div>
+{% endif %}

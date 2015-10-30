@@ -1,0 +1,6 @@
+{% if companylist %}
+{% for company in companylist %}
+{{company.name}}-{{company.get_scale_display}}-{{company.get_city_display}}<br>
+{% endfor %}
+{% endif %}
+

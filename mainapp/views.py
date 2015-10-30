@@ -11,6 +11,7 @@ from django.shortcuts import render_to_response, render
 from django.core.urlresolvers import reverse
 from django.core.files import File
 from django.contrib.syndication.views import Feed
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 class RSSFeed(Feed):
 	title = 'RSS feed -article'
@@ -119,6 +120,11 @@ def logout(req):
 def job(req,id):
 	job = Job.objects.filter(id=id)[0]
 	person_name = req.COOKIES.get('person_name',None)
+	if person_name:
+		person_id = req.COOKIES.get('person_id')
+		person = Person.objects.get(id=person_id)
+		collected = person.collection.filter(id=id)
+		applied = person.app_record.filter(id=id)
 	company_name = req.COOKIES.get('company_name',None)
 	return render(req,'job.html',locals())
 
@@ -303,21 +309,32 @@ def job_change(req,company,id):
 		job_form = JobForm(instance=job)
 	submit = '修改'
 	return render(req,'job_form.html',locals())
-
 def home(req):
-	if req.method == 'POST':
-		if req.POST.has_key('job'):
-			key = req.POST['search']
-			joblist = Job.objects.filter(name__icontains=key)
-		elif req.POST.has_key('company'):
-			key = req.POST['search']
-			companylist = Company.objects.filter(name__icontains=key)
-	else:
-		pass
 	person_name = req.COOKIES.get('person_name',None)
 	if not person_name:
 		company_name = req.COOKIES.get('company_name',None)
-	return render(req,'home.html',locals())
+
+	if req.GET.has_key('job_key'):
+		print('job')
+		key = req.GET['job_key']
+		alljob = Job.objects.filter(name__icontains=key)
+		paginator = Paginator(alljob,8)
+		page = req.GET.get('page')
+		try:
+			joblist = paginator.page(page)
+		except PageNotAnInteger:
+			joblist = paginator.page(1)
+		except EmptyPage:
+			joblist = paginator.page(paginator.num_pages)
+		return render(req,'job_search.html',locals())
+	elif req.GET.has_key('company_key'):
+		print('company')
+		key = req.GET['company_key']
+		companylist = Company.objects.filter(name__icontains=key)
+		return render(req,'company_search.html',locals())
+	else:
+		print('home')
+		return render(req,'home.html',locals())
 
 
 

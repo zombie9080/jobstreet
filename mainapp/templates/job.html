@@ -35,8 +35,8 @@ job
 			<!--
 			<a href='{% url 'job_collect' id=job.id %}'><button class='btn btn-primary'>收藏</button></a>
 			-->
-			<button id='collect' class='btn btn-primary'>收藏</button>
-			<a href='{% url 'job_apply' id=job.id %}'><button class='btn btn-primary'>申请</button></a>
+			<button id='collect' class='btn btn-primary'>{% if collected %}已收藏{% else %}收藏{% endif %}</button>
+			<button id='apply'   class='btn btn-primary'>{% if applied %}已申请{% else %}申请{% endif %}</button>
 			{% endif %}
 			<a href='{% url 'company' %}'><button class='btn btn-primary'>返回</button></a>
 		</div>
@@ -44,14 +44,21 @@ job
 </div>
 {% endblock %}
 {% block js %}
+<script src='/static/js/mycookies.js'></script>
 <script>
+{% if person_name %}
 $(function(){
 	$('#collect').click(function(){
 		$.post('{% url "job_collect" id=job.id %}',function(data){
-			alert('hi');
-			//$('#collect').text()='已收藏';
+			$('#collect').text('已收藏').off('click');
 		});
 	});
+	$('#apply').click(function(){
+		$.post('{% url "job_apply" id=job.id %}',function(data){
+			$('#collect').text('已申请').off('click');
+		});	
+	});
 });
+{% endif %}
 </script>
 {% endblock %}
