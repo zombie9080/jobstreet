@@ -1,0 +1,23 @@
+{% extends 'home.html' %}
+{% block title %}
+add cv
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-6'>
+			基本信息<br>
+			<form method='post'>
+				{% csrf_token %}
+				{{ cv_form.as_p }}
+				<input type='submit'value='{{ submit }}'></input><br>
+			</form>
+			<a href='{% url 'person' %}'><button class='btn btn-default'>返回</button></a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js%}
+{% endblock %}

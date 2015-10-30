@@ -1,0 +1,21 @@
+{% extends 'home.html' %}
+{% block title %}
+cv
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+name: {{cv.name}}<br>
+expected_salary: {{cv.get_expected_salary_display}}<br>
+job_objective: {{cv.job_objective}}<hr>
+technique: {{cv.technique}}<hr>
+experience: {{cv.experience}}<hr>
+evaluation: {{cv.evaluation}}<br>
+{% if person_name %}
+<a href='{% url 'cv_change' id=cv.id %}'><button class='btn btn-primary'>修改</button></a>
+<a href='{% url 'cv_delete' id=cv.id %}'><button class='btn btn-primary'>删除</button></a>
+{% endif %}
+<a href='{% url 'person' %}'><button class='btn btn-primary'>返回</button></a>
+{% endblock %}
+{% block js%}
+{% endblock %}

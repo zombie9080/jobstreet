@@ -1,0 +1,98 @@
+<head>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>log</title>
+		<link rel='stylesheet' href='/static/css/bootstrap.min.css'>
+		<script src='/static/js/jquery-2.1.4.min.js'></script>
+	</head>
+	<body>
+		<div class='container'>
+			<div class='row'>
+				<div class='col-md-7 col-sm-5'>
+					<a href="{% url 'home' %}">home</a>
+					<div class='container'>
+						<ul class='nav nav-tabs' >
+							<li role='presentation1' class='active'><a href='#person_in' aria-controls='person_in' role='tab' data-toggle='tab'>个人登录</a></li>
+							<li role='presentation2' ><a href='#person_up' aria-controls='person_up' role='tab' data-toggle='tab'>个人注册</a></li>
+							<li role='presentation3' ><a href='#company_in' aria-controls='company_in' role='tab' data-toggle='tab'>企业登录</a></li>
+							<li role='presentation4' ><a href='#company_up' aria-controls='company_up' role='tab' data-toggle='tab'>企业注册</a></li>
+						</ul>
+						<div class='tab-content'>
+							<div role='tabpanel' class='tab-pane active' id='person_in'>个人登录
+								<form id='person_login' method='post'>
+									{% csrf_token %}
+									{{ person_login_form }}
+									<input type='submit' name='person_login' value='login' />	
+								</form>
+							</div>
+							<div role='tabpanel' class='tab-pane' id='person_up'>个人注册
+								<form id='person_logup' method='post'>
+									{% csrf_token %}
+									{{ person_logup_form }}
+									<input type='submit' name='person_logup' value='logup' />	
+								</form>
+							</div>
+							<div role='tabpanel' class='tab-pane' id='company_in'>企业登录
+								<form id='company_login' method='post'>
+									{% csrf_token %}
+									{{ company_login_form }}
+									<input type='submit' name='company_login' value='login' />	
+								</form>
+							</div>
+							<div role='tabpanel' class='tab-pane' id='company_up'>企业注册
+								<form id='company_logup' method='post'>
+									{% csrf_token %}
+									{{ company_logup_form }}
+									<input type='submit' name='company_logup' value='logup' />	
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	<script>
+		$(function(){
+			//$('ul.nav li[role="presentation"]').on('mouseenter',function(){
+			//	$(this).tab();	
+			//});
+			//$('ul.nav a[data-toggle="tab"]').on('hidden.bs.tab',function(){
+			//	e.target;	
+			//	e.relatedTarget;
+			//});
+			$('ul.nav li[role="presentation1"]').on('mouseenter',function(){
+				$(this).tab('show');
+				$('#person_in').show();	
+				$('#person_up').hide();	
+				$('#company_in').hide();	
+				$('#company_up').hide();	
+			});
+			$('ul.nav li[role="presentation2"]').on('mouseenter',function(){
+				$(this).tab('show');
+				$('#person_in').hide();	
+				$('#person_up').show();	
+				$('#company_in').hide();	
+				$('#company_up').hide();	
+			});
+			$('ul.nav li[role="presentation3"]').on('mouseenter',function(){
+				$(this).tab('show');
+				$('#person_in').hide();	
+				$('#person_up').hide();	
+				$('#company_in').show();	
+				$('#company_up').hide();	
+			});
+			$('ul.nav li[role="presentation4"]').on('mouseenter',function(){
+				$(this).tab('show');
+				$('#person_in').hide();	
+				$('#person_up').hide();	
+				$('#company_in').hide();	
+				$('#company_up').show();	
+			});
+		});
+	</script>
+	<script src='/static/js/bootstrap.min.js'></script>
+	</body>
+</head>

@@ -1,0 +1,52 @@
+{% extends 'home.html' %}
+{% block title %}
+person_change
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-6'>
+
+			基本信息<br>
+			<form method='post' enctype='multipart/form-data'>
+				{% csrf_token %}
+				<img id='avatar_pic' src='/{{person.avatar}}' name='avatar_pic'></img>
+				<input type='file' id='avatar' name='avatar'/><br>
+				{{ person_basic_form.as_p }}
+				<input type='submit'value='修改'></input><br>
+			</form>
+			<a href='{% url 'person' %}'><button class='btn btn-primary'>返回</button></a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js%}
+<script>
+	$(function(){
+		$('#avatar').change(function(){
+			//var f = document.getElementById('avatar').files[0];
+			//var src = window.URL.createObjectURL(f);
+			//if (src)
+			//	$('#avatar_pic').attr('src',src);
+			// 改进
+			var objUrl = getObjectURL(this.files[0]);
+			if (objUrl){
+				$('#avatar_pic').attr('src',objUrl);
+			}
+			function getObjectURL(file){
+				var url = null;
+				if (window.createObjectURL != undefined) { // basic
+					url = window.createObjectURL(file);
+					} else if (window.URL != undefined) { // mozilla(firefox)
+					url = window.URL.createObjectURL(file);
+					} else if (window.webkitURL != undefined) { // webkit or chrome
+					url = window.webkitURL.createObjectURL(file);
+				}
+				return url;
+			}
+		});
+	});
+</script>
+{% endblock %}

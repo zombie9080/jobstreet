@@ -1,0 +1,28 @@
+{% extends 'home.html' %}
+{% block title %}
+company
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-6'>
+			name: {{company.name}}<br>
+			scale: {{company.get_scale_display}}<br>
+			city: {{company.get_city_display}}<br>
+			address: {{company.address}}<hr>
+			summary: {{company.summary}}<br>
+			<a href='{% url 'company_change' %}'>修改</a>
+			<hr>
+			职位<br>
+			{% for job in company.job_set.all %}
+			-<a href='{% url 'job' id=job.id %}'>{{job.name}}</a><a href='{% url 'job_delete' id=job.id %}'> 删除</a><br>
+			{% endfor %}
+			<a href='{% url 'job_add' %}'><button class='btn btn-primary'>发布职位</button></a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js%}
+{% endblock %}

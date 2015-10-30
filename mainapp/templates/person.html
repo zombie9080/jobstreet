@@ -1,0 +1,50 @@
+{% extends 'home.html' %}
+{% block title %}
+person
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container-fluid'>
+	<div class='row'>
+		<!--
+		<div id=sidebar-menu' class='col-xs-6 col-sm-3 col-md-2 sidebar-menu'>
+			<ul class='nav nav-sidebar'>
+				<li><a class='section' href='#'>1</a></li>
+				<li><a class='section' href='#'>2</a></li>
+				<li><a class='section' href='#'>3</a></li>
+				<li><a class='section' href='#'>4</a></li>
+			</ul>
+		</div>
+		-->
+		<div id='content' class='col-xs-6 col-xs-offset-6 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 flex'>
+			基本信息<br>
+			<a href='{% url 'person_change' %}'>修改</a><br>
+			avatar:<br>
+			<img src='/{{person.avatar}}'></img><br>
+			name: {{person.true_name}}<br>
+			email: {{person.email}}<br>
+			phone: {{person.phone}}<br>
+			city: {{person.get_city_display}}<br>
+			school: {{person.school}}<hr>
+
+			CVs:<br>
+			<a href='{% url 'cv_add' %}'>添加</a><br>
+			{% for cv in person.cv_set.all %}
+			-<a href='{% url 'cv' cv.id %}'>{{cv.name}}</a>  <a href='{% url 'cv_change' id=cv.id %}'>修改</a> <a href='{% url 'cv_delete' id=cv.id %}'>删除</a><br>
+			{% endfor %}
+			collection:<br>
+			<a href='#'>添加</a><br>
+			{% for job in person.collection.all %}
+			-<a href='#'>{{job.name}}</a> <a href='#'>删除</a><br>
+			{% endfor %}
+			app_record:<br>
+			{% for job in person.app_progress_set.all %}
+			-<a href='#'>{{job.job.name}}</a> progress: {{job.get_progress_display}}<br>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js%}
+{% endblock %}

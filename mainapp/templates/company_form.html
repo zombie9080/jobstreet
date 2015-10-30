@@ -1,0 +1,27 @@
+{% extends 'home.html' %}
+{% block title %}
+company_change
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-6'>
+			基本信息<br>
+			<form method='post' enctype='multipart/form-data'>
+				{% csrf_token %}
+				<!--
+				<img id='avatar_pic' src='/{{person.avatar}}' name='avatar_pic'></img>
+				<input type='file' id='avatar' name='avatar'/><br>
+				-->
+				{{ company_form.as_p }}
+				<input type='submit'value='修改'></input><br>
+			</form>
+			<a href='{% url 'company' %}'><button class='btn btn-primary'>返回</button></a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js%}
+{% endblock %}

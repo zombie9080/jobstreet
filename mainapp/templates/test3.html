@@ -1,0 +1,38 @@
+{% extends 'home.html' %}
+{% block content %}
+
+<div id="upload">
+    <form action="{:U('Index/uploadhandler')}" enctype="multipart/form-data" method="post" id="imgform">    
+            <div id="imglist">
+
+            </div>
+            <div id="updiv">
+            <input type='file'  name='photos' class="upfile">
+            </div>              
+            <input type="submit" value="提交">
+    </form>
+</div>
+
+{% endblock %}
+{% block js %}
+<script>
+	$(function(){
+        var imgurl=[];
+        function createfile(){
+        $('#updiv').append("<input type='file'  name='photos' class='upfile'>");
+        }
+        function showimg(url){
+            var img='<img src="'+url+'"/>';
+            $('#imglist').append(img);
+        }
+        function addfile(){
+            showimg($(this).val());
+            $(this).hide();
+            createfile();
+            $('.upfile').bind('change',addfile);
+        }
+        $('.upfile').bind('change',addfile);
+    })
+
+</script>
+{% endblock %}

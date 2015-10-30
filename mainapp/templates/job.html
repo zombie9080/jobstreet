@@ -1,0 +1,57 @@
+{% extends 'home.html' %}
+{% block title %}
+job
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-6'>
+			name: {{job.name}}<br>
+			years: {{job.get_years_display}}<br>
+			salary: {{job.get_salary_display}}<br>
+			count: {{job.count}}<br>
+			create_date: {{job.create_date}}<br>
+			company: {{job.company}}<hr>
+			tags:
+			{% for tag in job.tags.all %}
+			<div class='small'>{{tag.name}}</div>
+			{% endfor %}<br>
+			welfares:
+			{% for welfare in job.welfares.all %}
+			<div class='small'>{{welfare.name}}</div>
+			{% endfor %}<br>
+			{% if job.attach_welfare %}
+			attach_welfare: {{job.attach_welfare}}<br>
+			{% endif %}
+			technique: {{job.technique}}<hr>
+			duty: {{job.duty}}<br>
+
+			{% if company_name %}
+			<a href='{% url 'job_change' id=job.id %}'><button class='btn btn-primary'>修改</button></a>
+			{% endif %}
+			{% if person_name %}
+			<!--
+			<a href='{% url 'job_collect' id=job.id %}'><button class='btn btn-primary'>收藏</button></a>
+			-->
+			<button id='collect' class='btn btn-primary'>收藏</button>
+			<a href='{% url 'job_apply' id=job.id %}'><button class='btn btn-primary'>申请</button></a>
+			{% endif %}
+			<a href='{% url 'company' %}'><button class='btn btn-primary'>返回</button></a>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+$(function(){
+	$('#collect').click(function(){
+		$.post('{% url "job_collect" id=job.id %}',function(data){
+			alert('hi');
+			//$('#collect').text()='已收藏';
+		});
+	});
+});
+</script>
+{% endblock %}
