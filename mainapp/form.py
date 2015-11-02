@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 from .models import *
 from django.forms import ModelForm  
 from django import forms
@@ -61,3 +63,10 @@ class JobForm(ModelForm):
 	class Meta:
 		model = Job
 		fields = ['name','salary','count','years','tags','welfares','attach_welfare','technique','duty']
+class TestForm(forms.Form):
+	CHOICES=(('1','a'),('2','b'),('3','c'))
+	Boolean = forms.BooleanField(label_suffix='-aaa')
+	Choice = forms.ChoiceField(choices=CHOICES)
+	TypedChoice = forms.TypedChoiceField(choices=CHOICES)
+	MultipleChoice = forms.MultipleChoiceField(choices=CHOICES,help_text='按住Ctrl多选')
+	

@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 from django.core.files import File
 from django.contrib.syndication.views import Feed
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.cache import cache
 
 class RSSFeed(Feed):
 	title = 'RSS feed -article'
@@ -194,13 +195,12 @@ def cv_delete(req,person,id):
 
 def cv_change(req,person,id):
 	person_name = person.true_name	
+	cv = CV.objects.filter(id=id)[0]
 	if req.method == 'GET':
-		cv = CV.objects.filter(id=id)[0]
 		cv_form = CVForm(instance=cv)
 		submit = '修改'
 		return render(req,'cv_form.html',locals())
 	elif req.method == 'POST':
-		cv = CV.objects.filter(id=id)[0]
 		cv_form = CVForm(req.POST,instance=cv)
 		if cv_form.is_valid():
 			cv.save()
@@ -315,9 +315,15 @@ def home(req):
 		company_name = req.COOKIES.get('company_name',None)
 
 	if req.GET.has_key('job_key'):
-		print('job')
 		key = req.GET['job_key']
-		alljob = Job.objects.filter(name__icontains=key)
+		if key == '':
+			if cache.get('alljob'):
+				alljob = cache.get('alljob')
+			else:
+				alljob = Job.objects.filter(name__icontains=key)
+				cache.set('alljob',alljob)
+		else:
+			alljob = Job.objects.filter(name__icontains=key)
 		paginator = Paginator(alljob,8)
 		page = req.GET.get('page')
 		try:
@@ -328,7 +334,6 @@ def home(req):
 			joblist = paginator.page(paginator.num_pages)
 		return render(req,'job_search.html',locals())
 	elif req.GET.has_key('company_key'):
-		print('company')
 		key = req.GET['company_key']
 		companylist = Company.objects.filter(name__icontains=key)
 		return render(req,'company_search.html',locals())
@@ -353,6 +358,11 @@ def test(req,num):
 		return render(req,'test2.html')
 	if num == '3':
 		return render(req,'test3.html')
+	if num == '0':
+		return render(req,'test0.html')
+def test0(req):
+	test_form = TestForm()
+	return render(req,'test0.html',locals())
 def test1(req):
 	return render(req,'test1.html')
 def test2(req):

@@ -109,24 +109,48 @@
 				</div>
 		</section>
 		<footer class='main-footer'>
+		<div class='container'>
+		<div class='row'>
+			<div class='col-md-4'>
+				<h3>最新文章</h3>
+			</div>
+			<div class='col-md-4'>
+				<h3>标签云</h3>	
+			</div>
+			<div class='col-md-4'>
+				<h3>合作伙伴</h3>
+			</div>
+		</div>
+		</div>
 		</footer>
 		{% endblock %}
 		{% block js %}
 		<script>
-			$('#search').click(function(){
-				var key = $(this).prev('input').val();
-				var data;
-				if($('#job').hasClass('active'))
-				{
-					data = {'job_key':key};
-				}
-				else if($('#company').hasClass('active'))
-				{
-					data = {'company_key':key};
-				}
+			var job = true;
+			var company = false;
+			$(function(){
+				$('#job').click(function(){job=true;company=false});
+				$('#company').click(function(){company=true;job=false});
+				$('#search').click(function(){
+					var key = $(this).prev('input').val();
+					var data;
+					if($('#job').hasClass('active'))
+					{
+						data = {'job_key':key};
+					}
+					else if($('#company').hasClass('active'))
+					{
+						data = {'company_key':key};
+					}
+					
+					//if(job == true)
+					//	data = {'job_key':key};
+					//else if(company == true)
+					//	data = {'company_key':key};
 
-				$.get('{% url 'home' %}',data,function(data){
-					$('#job_search').html(data);
+					$.get('{% url 'home' %}',data,function(data){
+						$('#job_search').html(data);
+					});
 				});
 			});
 		</script>

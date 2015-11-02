@@ -44,4 +44,5 @@ urlpatterns = [
 		url(r'^test/1/$',get_test(test1),name='test1'),
 		url(r'^test/2/$',get_test(test2),name='test2'),
 		url(r'^test/3/$',get_test(test3),name='test3'),
+		url(r'^test/0/$',get_test(test0),name='test0'),
 ]

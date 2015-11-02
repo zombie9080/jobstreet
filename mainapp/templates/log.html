@@ -23,28 +23,28 @@
 							<div role='tabpanel' class='tab-pane active' id='person_in'>个人登录
 								<form id='person_login' method='post'>
 									{% csrf_token %}
-									{{ person_login_form }}
+									{{ person_login_form.as_p }}
 									<input type='submit' name='person_login' value='login' />	
 								</form>
 							</div>
 							<div role='tabpanel' class='tab-pane' id='person_up'>个人注册
 								<form id='person_logup' method='post'>
 									{% csrf_token %}
-									{{ person_logup_form }}
+									{{ person_logup_form.as_p }}
 									<input type='submit' name='person_logup' value='logup' />	
 								</form>
 							</div>
 							<div role='tabpanel' class='tab-pane' id='company_in'>企业登录
 								<form id='company_login' method='post'>
 									{% csrf_token %}
-									{{ company_login_form }}
+									{{ company_login_form.as_p }}
 									<input type='submit' name='company_login' value='login' />	
 								</form>
 							</div>
 							<div role='tabpanel' class='tab-pane' id='company_up'>企业注册
 								<form id='company_logup' method='post'>
 									{% csrf_token %}
-									{{ company_logup_form }}
+									{{ company_logup_form.as_p }}
 									<input type='submit' name='company_logup' value='logup' />	
 								</form>
 							</div>

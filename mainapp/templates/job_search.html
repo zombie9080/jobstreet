@@ -18,31 +18,26 @@
 		</div>
 	</div>
 	{% endfor %}
-	<div class="pagination">
+	<div class="pagination pull-right">
 		<span class="step-links">
 			{% if joblist.has_previous %}
-			<a id='previous'>previous</a>
+			<a id='previous'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>
 			{% endif %}
-
-			<span class="current">
-				Page {{ joblist.number }} of {{ paginator.num_pages }}.
-			</span>
-
+			<span>Page {{ joblist.number }} of {{ paginator.num_pages }}.</span>
 			{% if joblist.has_next %}
-			<a id='next'>next</a>
+			<a id='next'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>	</a>
 			{% endif %}
 		</span>
 	</div>
 	<script>
-		// fix it    can not find  '#job' '#company'
 		{% if joblist.has_previous %}
 		$('#previous').click(function(){
-			var key = $(this).prev('input').val();
+			var key = $('#search').prev('input').val();
 			var data;
 			if($('#job').hasClass('active'))
-				data = {'job_key':key};
+			data = {'job_key':key};
 			else if($('#company').hasClass('active'))
-				data = {'company_key':key};
+			data = {'company_key':key};
 			data['page']={{joblist.previous_page_number}};
 			$.get('{% url 'home' %}',data,function(data){
 				$('#job_search').html(data);
@@ -51,15 +46,15 @@
 		{% endif %}
 		{% if joblist.has_next %}
 		$('#next').click(function(){
-			var key = $(this).prev('input').val();
+			var key = $('#search').prev('input').val();
 			var data;
 			if($('#job').hasClass('active'))
-				data = {'job_key':key};
+			data = {'job_key':key};
 			else if($('#company').hasClass('active'))
-				data = {'company_key':key};
+			data = {'company_key':key};
 			data['page']={{joblist.next_page_number}};
 			$.get('{% url 'home' %}',data,function(data){
-				//$('#job_search').html(data);
+				$('#job_search').html(data);
 			});
 		});
 		{% endif %}

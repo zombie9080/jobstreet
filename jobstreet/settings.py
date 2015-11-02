@@ -97,6 +97,17 @@ DATABASES = {
     }
 }
 
+CACHES = {
+	'default' : {
+		'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',		
+	#	'BACKEND': 'django.core.cache.backends.db.DatabaseCache',		
+	#	'LOCATION': 'mycache',
+		'TIMEOUT': 600,
+		'OPTIONS': {
+			'MAX_ENTRIES': 2000		
+		}
+	}		
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
