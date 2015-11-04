@@ -1,13 +1,14 @@
 {% if joblist %}
-<div class='panel panel-success'>
+<div id='job_result' class='panel panel-success'>
 	<div class='panel-heading'>##</div>
 	<div class='panel-body'>
-		共{{ paginator.count }}个职位	
+		<input id='checkall' type='checkbox'>全选</input> 共{{ paginator.count }}个职位	
 	</div>
 	{% for job in joblist %}
 	<div class='panel panel-info'>
 		<div class='panel-heading'>
-			<div><a href='{% url 'job' id=job.id %}'>{{job.name}}</a></div><div class='pull-right'>{{job.get_salary_display}}/月</div>
+			<input name='{{job.id}}' type='checkbox'></input>
+			<a href='{% url 'job' id=job.id %}'>{{job.name}}</a><div class='pull-right'>{{job.get_salary_display}}/月</div>
 		</div>
 		<div class='panel-body'>
 			<div class='col-md-3'><small>公司:</small> <big>{{job.company}}</big></div>
@@ -18,6 +19,10 @@
 		</div>
 	</div>
 	{% endfor %}
+	<div class='col-md-8'>
+		<span><button id='collect' class='btn btn-success'>收藏</button></span>
+		<span><button id='apply' class='btn btn-success'>申请</button></span>
+	</div>
 	<div class="pagination pull-right">
 		<span class="step-links">
 			{% if joblist.has_previous %}
@@ -29,7 +34,13 @@
 			{% endif %}
 		</span>
 	</div>
+
+	
 	<script>
+		$('#checkall').click(function(){
+			var checked = $(this).is(':checked');
+			$('#job_result .panel.panel-info input[type="checkbox"]').each(function(){$(this).prop('checked',checked);});	
+		});
 		{% if joblist.has_previous %}
 		$('#previous').click(function(){
 			var key = $('#search').prev('input').val();
@@ -58,6 +69,50 @@
 			});
 		});
 		{% endif %}
+		$('#apply').click(function(){
+			{% if person_name %}
+				var ids=[];
+				$('#job_result .panel.panel-info input[type="checkbox"]').each(function(){
+					//if($(this).is(':checked'))
+					if($(this).prop('checked'))
+						ids.push($(this).attr('name'));
+				});
+				//console.log(ids);
+				if(ids.length){
+					ids = ids.join('@');
+					$.post('{% url "job_apply_mary" %}',{'ids':ids},
+					function(data){alert(data);}
+					);
+				}else{
+					alert('未选中');	
+				}
+			{% else %}
+				alert('please login');
+				//$.get('{% url "log" %}',);
+			{% endif %}
+		});
+		$('#collect').click(function(){
+			{% if person_name %}
+				var ids=[];
+				$('#job_result .panel.panel-info input[type="checkbox"]').each(function(){
+					//if($(this).is(':checked'))
+					if($(this).prop('checked'))
+						ids.push($(this).attr('name'));
+				});
+				console.log(ids);
+				if(ids.length){
+					ids = ids.join('@');
+					$.post('{% url "job_collect_add_mary" %}',{'ids':ids},
+					function(data){alert(data);}
+					);
+				}else{
+					alert('未选中');	
+				}
+			{% else %}
+				alert('please login');
+				//$.get('{% url "log" %}',);
+			{% endif %}
+		});
 	</script>
 </div>
 {% endif %}

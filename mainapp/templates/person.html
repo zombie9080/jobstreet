@@ -34,17 +34,45 @@ person
 			-<a href='{% url 'cv' cv.id %}'>{{cv.name}}</a>  <a href='{% url 'cv_change' id=cv.id %}'>修改</a> <a href='{% url 'cv_delete' id=cv.id %}'>删除</a><br>
 			{% endfor %}
 			collection:<br>
-			<a href='#'>添加</a><br>
-			{% for job in person.collection.all %}
-			-<a href='#'>{{job.name}}</a> <a href='#'>删除</a><br>
-			{% endfor %}
+			<div class='job_collection'>
+				{% for job in person.collection.all %}
+				<div>
+					-<a href='{% url "job" id=job.id %}'>{{job.name}}</a>
+					<button name='{{job.id}}' class='btn btn-default'>删除</button>
+					<!--<a href='{% url "job_collect_delete" id=job.id %}'><button name='{{job.id}}' class='btn btn-default'>删除</button></a>--><br>
+				</div>
+				{% endfor %}
+			</div>
 			app_record:<br>
-			{% for job in person.app_progress_set.all %}
-			-<a href='#'>{{job.job.name}}</a> progress: {{job.get_progress_display}}<br>
+			<div class='app_record'>
+			{% for progress in person.app_progress_set.all %}
+			<div>
+				<a href='{% url "job" id=progress.job.id %}' class='col-md-3'>{{progress.job.name}}</a> <span class='col-md-3'>progress: {{progress.get_progress_display}}</span> <button class='btn btn-default' name='{{progress.job.id}}'>删除</button><br>
+			</div>
 			{% endfor %}
+			</div>
 		</div>
 	</div>
 </div>
 {% endblock %}
 {% block js%}
+<script>
+	$(function(){
+		$('.job_collection button').click(function(){
+			var id = $(this).attr('name');
+			var url = 'job_collect_delete/'+ id +'/';
+			$.post(url,function(data){
+				$('.job_collection button[name='+id+']').parent().remove();
+			});
+			//$(this).parent().remove();
+		});	
+		$('.app_record button').click(function(){
+			var id = $(this).attr('name');	
+			var url = 'job_apply_delete/' + id + '/';	
+			$.post(url,function(){
+				$('.app_record button[name='+id+']').parent().remove();	
+			});
+		});
+	});
+</script>
 {% endblock %}

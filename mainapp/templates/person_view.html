@@ -1,0 +1,29 @@
+{% extends 'home.html' %}
+{% block title %}
+person
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container-fluid'>
+	<div class='row'>
+		<div id='content' class='col-xs-6 col-xs-offset-6 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 flex'>
+			基本信息<br>
+			avatar:<br>
+			<img src='/{{person.avatar}}'></img><br>
+			name: {{person.true_name}}<br>
+			email: {{person.email}}<br>
+			phone: {{person.phone}}<br>
+			city: {{person.get_city_display}}<br>
+			school: {{person.school}}<hr>
+
+			CVs:<br>
+			{% for cv in person.cv_set.all %}
+			-<a href='{% url 'cv' cv.id %}'>{{cv.name}}</a><br>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block js%}
+{% endblock %}

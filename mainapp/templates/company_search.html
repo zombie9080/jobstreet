@@ -1,6 +1,61 @@
 {% if companylist %}
-{% for company in companylist %}
-{{company.name}}-{{company.get_scale_display}}-{{company.get_city_display}}<br>
-{% endfor %}
+<div class='panel panel-success'>
+	<div class='panel-heading'>##</div>
+	<div class='panel-body'>
+		共{{ paginator.count }}个公司	
+	</div>
+	{% for company in companylist %}
+	<div class='panel panel-info'>
+		<div class='panel-heading'>
+			<div><a href='{% url 'company_view' id=company.id %}'>{{company.name}}</a></div>
+		</div>
+		<div class='panel-body'>
+			<div class='col-md-6'><small>规模:</small> <big>{{company.get_scale_display}}</big></div>
+			<div class='col-md-6'><small>地址:</small> <big>{{company.address}}</big></div>
+			<!--<div class='col-md-2'>{{job.technique|truncatewords:5}}</div>-->
+		</div>
+	</div>
+	{% endfor %}
+	<div class="pagination pull-right">
+		<span class="step-links">
+			{% if companylist.has_previous %}
+			<a id='previous'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a>
+			{% endif %}
+			<span>Page {{ companylist.number }} of {{ paginator.num_pages }}.</span>
+			{% if companylist.has_next %}
+			<a id='next'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>	</a>
+			{% endif %}
+		</span>
+	</div>
+	<script>
+		{% if joblist.has_previous %}
+		$('#previous').click(function(){
+			var key = $('#search').prev('input').val();
+			var data;
+			if($('#job').hasClass('active'))
+				data = {'job_key':key};
+			else if($('#company').hasClass('active'))
+				data = {'company_key':key};
+			data['page']={{companylist.previous_page_number}};
+			$.get('{% url 'home' %}',data,function(data){
+				$('#company_search').html(data);
+			});
+		});
+		{% endif %}
+		{% if joblist.has_next %}
+		$('#next').click(function(){
+			var key = $('#search').prev('input').val();
+			var data;
+			if($('#job').hasClass('active'))
+				data = {'job_key':key};
+			else if($('#company').hasClass('active'))
+				data = {'company_key':key};
+			data['page']={{companylist.next_page_number}};
+			$.get('{% url 'home' %}',data,function(data){
+				$('#company_search').html(data);
+			});
+		});
+		{% endif %}
+	</script>
+</div>
 {% endif %}
-

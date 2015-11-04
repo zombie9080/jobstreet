@@ -28,17 +28,40 @@ job
 			technique: {{job.technique}}<hr>
 			duty: {{job.duty}}<br>
 
-			{% if company_name %}
-			<a href='{% url 'job_change' id=job.id %}'><button class='btn btn-primary'>修改</button></a>
+			{% if attributed %}
+				<a href='{% url 'job_change' id=job.id %}'><button class='btn btn-primary'>修改</button></a>
 			{% endif %}
 			{% if person_name %}
-			<!--
-			<a href='{% url 'job_collect' id=job.id %}'><button class='btn btn-primary'>收藏</button></a>
-			-->
 			<button id='collect' class='btn btn-primary'>{% if collected %}已收藏{% else %}收藏{% endif %}</button>
 			<button id='apply'   class='btn btn-primary'>{% if applied %}已申请{% else %}申请{% endif %}</button>
 			{% endif %}
-			<a href='{% url 'company' %}'><button class='btn btn-primary'>返回</button></a>
+			<hr>
+			{% if attributed %}
+			<span>申请记录</span><br>
+			<div class='job_apply_list'>
+				{% for app_progress in app_progress_list %}
+				<div>
+					<a href='{% url 'person_view' id=app_progress.person.id %}' class='col-md-3'>{{app_progress.person}}</a><span class='col-md-3'> {{app_progress.get_progress_display}}</span>
+					{% if app_progress.progress == "ap" %}
+					<a class='scan' name='{{app_progress.person.id}}'>标记已阅</a>
+					<a class='interview' style="display: none;" name='{{app_progress.person.id}}'>安排面试</a>
+					<a class='offer' style="display: none;" name='{{app_progress.person.id}}'>通知录用</a>
+					{% elif app_progress.progress == "sc" %}
+					<a class='scan' style="display: none;" name='{{app_progress.person.id}}'>标记已阅</a>
+					<a class='interview' name='{{app_progress.person.id}}'>安排面试</a>
+					<a class='offer' style="display: none;" name='{{app_progress.person.id}}'>通知录用</a>
+					{% elif app_progress.progress == "in" %}
+					<a class='scan' style="display: none;" name='{{app_progress.person.id}}'>标记已阅</a>
+					<a class='interview' style="display: none;" name='{{app_progress.person.id}}'>安排面试</a>
+					<a class='offer' name='{{app_progress.person.id}}'>通知录用</a>
+					{% endif %}
+
+					<br/>
+				</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+
 		</div>
 	</div>
 </div>
@@ -49,7 +72,7 @@ job
 {% if person_name %}
 $(function(){
 	$('#collect').click(function(){
-		$.post('{% url "job_collect" id=job.id %}',function(data){
+		$.post('{% url "job_collect_add" id=job.id %}',function(data){
 			$('#collect').text('已收藏').off('click');
 		});
 	});
@@ -60,5 +83,24 @@ $(function(){
 	});
 });
 {% endif %}
+{% if company_name %}
+$(function(){
+	// fix it
+	$('.job_apply_list a.scan').click(function(){
+		$(this).hide();
+		$(this).next().show();
+	//	$.post(url,{},function(){});	
+	});
+	$('.job_apply_list a.interview').click(function(){
+		$(this).hide();
+		$(this).next().show();
+	//	$.post(url,{},function(){});	
+	});
+	$('.job_apply_list a.offer').click(function(){
+		$(this).hide();
+	//	$.post(url,{},function(){});	
+	});
+});
+{% endif %} 
 </script>
 {% endblock %}

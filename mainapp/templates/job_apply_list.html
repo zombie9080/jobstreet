@@ -1,0 +1,24 @@
+{% extends 'home.html' %}
+{% block title %}
+job_apply_list
+{% endblock %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-8'>
+{% for app_progress in app_progress_list %}
+{{app_progress.person}} {{app_progress.get_progress_display}}
+{% if app_progress.progress == "ap" %}查看{% endif %}
+{% if app_progress.progress == "sc" %}面试{% endif %}
+{% if app_progress.progress == "in" %}录用{% endif %}
+<br/>
+{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+{% block js%}
+{% endblock %}

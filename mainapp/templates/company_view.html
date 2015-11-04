@@ -16,10 +16,8 @@ company
 			<hr>
 			职位<br>
 			{% for job in company.job_set.all %}
-			-<a href='{% url 'job' id=job.id %}'>{{job.name}}</a> 
-			<br>
+			-<a href='{% url 'job' id=job.id %}'>{{job.name}}</a><br>
 			{% endfor %}
-			<a href='{% url 'job_add' %}'><button class='btn btn-info'>发布职位</button></a><br>
 		</div>
 	</div>
 </div>
