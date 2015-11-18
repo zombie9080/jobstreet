@@ -27,6 +27,7 @@ class PersonBasicForm(ModelForm):
 	class Meta:
 		model = Person
 		fields = ['true_name','email','phone','city','school']
+		#localized_fields = ('true_name','email','phone','city','school')
 	
 
 class CVForm(ModelForm):
@@ -69,4 +70,6 @@ class TestForm(forms.Form):
 	Choice = forms.ChoiceField(choices=CHOICES)
 	TypedChoice = forms.TypedChoiceField(choices=CHOICES)
 	MultipleChoice = forms.MultipleChoiceField(choices=CHOICES,help_text='按住Ctrl多选')
+	SplitDateTimeField = forms.SplitDateTimeField(input_date_formats='%m-%d-%Y',input_time_formats='%H:%M:%S')
+	Slug = forms.SlugField()
 	

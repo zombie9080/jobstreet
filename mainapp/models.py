@@ -10,7 +10,7 @@ SALARY = (('0','面议'),('1','2000-2999'),('2','3000-4499'),('3','4500-5999'),(
 class Person(models.Model):
 	#CITY = ( ('bj','北京'),('sh','上海'),('gz','广州'),('sz','深圳'),('wh','武汉'),('xa','西安'),('hz','杭州'),('nj','南京'),('cd','成都'),('cq','重庆'),('dw','东莞'),('dl','大连'),('sy','沈阳'),('sz','苏州'),('km','昆明'),('cs','长沙'),('hf','合肥'),('lb','宁波'),('zz','郑州'),('tj','天津'),('qd','青岛'),('jn','济南'),('heb','哈尔滨'),('cc','长春'),('fz','福州'),)
 	account = models.CharField(max_length=50)
-	password = models.CharField(max_length = 30)
+	password = models.CharField(max_length = 40)
 	true_name = models.CharField(max_length=20)
 	email = models.EmailField()
 	phone = models.CharField(max_length=11)
@@ -26,11 +26,15 @@ class Person(models.Model):
 		ordering = ['city']
 
 class App_progress(models.Model):
+	APPLICATED = 'ap'
+	SCANNED = 'sc'
+	INTERVIEW = 'in'
+	OFFER = 'of'
 	STATUS = (
-		('ap','Applicated'),	
-		('sc','Scanned'),
-		('in','Interview'),
-		('of','Offer'),
+		(APPLICATED,'Applicated'),	
+		(SCANNED,'Scanned'),
+		(INTERVIEW,'Interview'),
+		(OFFER,'Offer'),
 	)
 	person = models.ForeignKey('Person')
 	job = models.ForeignKey('Job')
@@ -87,7 +91,7 @@ class Company(models.Model):
 	#CITY = ( ('bj','北京'),('sh','上海'),('gz','广州'),('sz','深圳'),('wh','武汉'),('xa','西安'),('hz','杭州'),('nj','南京'),('cd','成都'),('cq','重庆'),('dw','东莞'),('dl','大连'),('sy','沈阳'),('sz','苏州'),('km','昆明'),('cs','长沙'),('hf','合肥'),('lb','宁波'),('zz','郑州'),('tj','天津'),('qd','青岛'),('jn','济南'),('heb','哈尔滨'),('cc','长春'),('fz','福州'),)
 	#AREA=()
 	account = models.CharField(max_length=50)
-	password = models.CharField(max_length=30)
+	password = models.CharField(max_length=40)
 	name = models.CharField(max_length=30,unique=True)
 	scale = models.CharField(max_length=1,choices=SCALE)
 	city = models.CharField(max_length=2,choices=CITY)

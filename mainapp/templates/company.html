@@ -13,6 +13,7 @@ company
 			city: {{company.get_city_display}}<br>
 			address: {{company.address}}<hr>
 			summary: {{company.summary}}<br>
+			<a href='{% url "company_change" %}'><button class='btn btn-default'>修改</button></a>
 			<hr>
 			职位<br>
 			{% for job in company.job_set.all %}

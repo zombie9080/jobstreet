@@ -7,72 +7,124 @@ person
 {% block content %}
 <div class='container-fluid'>
 	<div class='row'>
-		<!--
-		<div id=sidebar-menu' class='col-xs-6 col-sm-3 col-md-2 sidebar-menu'>
+		<div class='col-md-10 col-md-offset-1'>
+	<div class='page secondary with-sidebar'>
+		<div class='page-header'>
+			<div class='page-header-content'>
+				<ol class="breadcrumb">
+					<li><a href='{% url 'home' %}'>首页</a></li>
+					<li><a href='{% url "person" %}'>个人</a></li>
+					<li class="active">基本信息</li>
+				</ol>
+			</div>
+		</div>
+
+		<!--<div id='sidebar-menu' class='col-xs-6 col-sm-3 col-md-2 page-sidebar pull-left'>-->
+		<div id='sidebar-menu' class='page-sidebar pull-left'>
 			<ul class='nav nav-sidebar'>
-				<li><a class='section' href='#'>1</a></li>
-				<li><a class='section' href='#'>2</a></li>
-				<li><a class='section' href='#'>3</a></li>
-				<li><a class='section' href='#'>4</a></li>
+				<li><a class='section' name='basic' href='#basic'>基本信息</a></li>
+				<li><a class='section' name='cvs' href='#cvs'>简历管理</a></li>
+				<li><a class='section' name='collection' href='#collection'>职位收藏</a></li>
+				<li><a class='section' name='app_record' href='#app_record'>申请记录</a></li>
 			</ul>
 		</div>
-		-->
-		<div id='content' class='col-xs-6 col-xs-offset-6 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 flex'>
-			基本信息<br>
-			<a href='{% url 'person_change' %}'>修改</a><br>
-			avatar:<br>
-			<img src='/{{person.avatar}}'></img><br>
-			name: {{person.true_name}}<br>
-			email: {{person.email}}<br>
-			phone: {{person.phone}}<br>
-			city: {{person.get_city_display}}<br>
-			school: {{person.school}}<hr>
+		<!--<div id='content' class='page-region col-xs-6 col-xs-offset-6 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 flex'>-->
+		<div id='content' class='page-region col-md-offset-3'>
+			<div class='page-region-content'>
+				<div id='basic'>
+				头像:<br>
+				<img src='/{{person.avatar}}'></img><br>
+				姓名: {{person.true_name}}<br>
+				e-mail: {{person.email}}<br>
+				手机: {{person.phone}}<br>
+				所在地: {{person.get_city_display}}<br>
+				毕业: {{person.school}}<hr>
+				<a href='{% url 'person_change' %}'>修改</a><br>
+				</div>
 
-			CVs:<br>
-			<a href='{% url 'cv_add' %}'>添加</a><br>
+		<div id='cvs' style='display: none;'>
 			{% for cv in person.cv_set.all %}
-			-<a href='{% url 'cv' cv.id %}'>{{cv.name}}</a>  <a href='{% url 'cv_change' id=cv.id %}'>修改</a> <a href='{% url 'cv_delete' id=cv.id %}'>删除</a><br>
+			<div class='col-md-8'><a href='{% url 'cv' cv.id %}'>{{cv.name}}</a></div>
+			<div class='col-md-2'><a href='{% url 'cv_change' id=cv.id %}'><button class='btn btn-default'>修改</button></a></div> 
+			<div class='col-md-2'><a href='{% url 'cv_delete' id=cv.id %}'><button class='btn btn-default'>删除</button></a><br></div>
 			{% endfor %}
-			collection:<br>
-			<div class='job_collection'>
+			<a href='{% url 'cv_add' %}'><button class='btn btn-info'>添加</button></a><br>
+		</div>
+			<div id='collection' class='collection' style='display: none;'>
 				{% for job in person.collection.all %}
-				<div>
-					-<a href='{% url "job" id=job.id %}'>{{job.name}}</a>
-					<button name='{{job.id}}' class='btn btn-default'>删除</button>
+				<div class='job'>
+					<a href='{% url "job" id=job.id %}' class='col-md-4'>{{job.name}}</a>
+					<a href='{% url "company_view" id=job.company.id %}' class='col-md-4'>{{job.company.name}}</a> 
+					<div class='col-md-4'><button name='{{job.id}}' class='btn btn-default'>删除</button></div>
 					<!--<a href='{% url "job_collect_delete" id=job.id %}'><button name='{{job.id}}' class='btn btn-default'>删除</button></a>--><br>
 				</div>
 				{% endfor %}
 			</div>
-			app_record:<br>
-			<div class='app_record'>
-			{% for progress in person.app_progress_set.all %}
-			<div>
-				<a href='{% url "job" id=progress.job.id %}' class='col-md-3'>{{progress.job.name}}</a> <span class='col-md-3'>progress: {{progress.get_progress_display}}</span> <button class='btn btn-default' name='{{progress.job.id}}'>删除</button><br>
+			
+			<div id='app_record' class='app_record' style='display: none;'>
+			{% for app_progress in person.app_progress_set.all %}
+			<div class='app_progress'>
+				<a href='{% url "job" id=app_progress.job.id %}' class='col-md-3'>{{app_progress.job.name}}</a> 
+				<a href='{% url "company_view" id=app_progress.job.company.id %}' class='col-md-3'>{{app_progress.job.company.name}}</a> 
+				<span class='col-md-3'>状态: {{app_progress.get_progress_display}}</span>
+				<div class='col-md-3'><button class='btn btn-default' name='{{app_progress.job.id}}'>删除</button></div>
 			</div>
 			{% endfor %}
 			</div>
 		</div>
+		</div>
 	</div>
+	</div>
+</div>
+</div>
 </div>
 {% endblock %}
 {% block js%}
-<script>
-	$(function(){
-		$('.job_collection button').click(function(){
-			var id = $(this).attr('name');
-			var url = 'job_collect_delete/'+ id +'/';
-			$.post(url,function(data){
-				$('.job_collection button[name='+id+']').parent().remove();
-			});
-			//$(this).parent().remove();
-		});	
-		$('.app_record button').click(function(){
-			var id = $(this).attr('name');	
-			var url = 'job_apply_delete/' + id + '/';	
-			$.post(url,function(){
-				$('.app_record button[name='+id+']').parent().remove();	
-			});
+<script> $(function(){
+	$('#sidebar-menu a[name="basic"]').click(function(){
+		$('#basic').show();
+		$('#cvs').hide();
+		$('#collection').hide();
+		$('#app_record').hide();
+		$('.page-header ol.breadcrumb>li.active').text('基本信息');
+	});
+	$('#sidebar-menu a[name="cvs"]').click(function(){
+		$('#cvs').show();
+		$('#basic').hide();
+		$('#collection').hide();
+		$('#app_record').hide();
+		$('.page-header ol.breadcrumb>li.active').text('简历管理');
+	});
+	$('#sidebar-menu a[name="collection"]').click(function(){
+		$('#collection').show();
+		$('#basic').hide();
+		$('#cvs').hide();
+		$('#app_record').hide();
+		$('.page-header ol.breadcrumb>li.active').text('职位收藏');
+	});
+	$('#sidebar-menu a[name="app_record"]').click(function(){
+		$('#app_record').show();
+		$('#basic').hide();
+		$('#cvs').hide();
+		$('#collection').hide();
+		$('.page-header ol.breadcrumb>li.active').text('职位申请');
+	});
+	$('#collection button').click(function(){
+		var id = $(this).attr('name');
+		var url = 'job_collect_delete/'+ id +'/';
+		$.post(url,function(data){
+			$('#collection button[name='+id+']').parents('.job').remove();
+			//$('#collection button[name='+id+']').parent().parent().remove();
+		});
+	});	
+	$('#app_record button').click(function(){
+		var id = $(this).attr('name');	
+		var url = 'job_apply_delete/' + id + '/';	
+		$.post(url,function(){
+			$('#app_record button[name='+id+']').parents('.app_progress').remove();
+			//$('#app_record button[name='+id+']').parent().parent().remove();
 		});
 	});
+});
 </script>
 {% endblock %}

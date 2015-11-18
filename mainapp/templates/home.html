@@ -43,7 +43,7 @@
 				<a class="button-success pure-button" href="{% url 'RSS' %}">RSS</a>
 				</li>
 				<li><a href='#'>Search</a></li>
-				<li><a href='#'>Default</a></li>
+				<li><a href='#'>Message</a></li>
 				{% if person_name %}
 				<li><a href="{% url 'person' %}">{{person_name}}</a></li>
 				<li><a href='{% url 'logout' %}'>退出</a></li>
@@ -68,9 +68,13 @@
 									<li id='job' name='job' role='presentation' class='active'><a data-toggle='tab'>职位</a></li>
 									<li id='company' name='company' role='presentation' ><a data-toggle='tab'>公司</a></li>
 								</ul>
-								<div class="form-group">
+								<div class="input-group">
 									<input type="text" name='search_text' class="form-control" placeholder="Search">
-									<button id='search' type='submit' class="btn btn-default"><span class='glyphicon glyphicon-search' aria-hidden='true'></span>搜索</button>
+									<span class='input-group-btn'>
+										<button id='search' class="btn btn-default">
+											<span class='glyphicon glyphicon-search' aria-hidden='true'></span>搜索
+										</button>
+									</span>
 								</div>
 								<a title="产品经理" href="#" target="_blank">产品经理</a>
 								<a title="销售总监" href="#" target="_blank">销售总监</a>
@@ -127,13 +131,13 @@
 		{% endblock %}
 		{% block js %}
 		<script>
-			var job = true;
-			var company = false;
+			//var job_search_prev=[];
+			//var company_search_prev=[];
 			$(function(){
 				$('#job').click(function(){job=true;company=false});
 				$('#company').click(function(){company=true;job=false});
 				$('#search').click(function(){
-					var key = $(this).prev('input').val();
+					var key = $(this).parent().parent().find('input[type="text"]').val();
 					var data;
 					if($('#job').hasClass('active'))
 					{

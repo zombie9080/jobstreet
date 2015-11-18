@@ -13,6 +13,7 @@ from django.core.files import File
 from django.contrib.syndication.views import Feed
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.cache import cache
+import hashlib
 
 class RSSFeed(Feed):
 	title = 'RSS feed -article'
@@ -36,7 +37,11 @@ def log(req):
 			if person_login_form.is_valid():
 				account = person_login_form.cleaned_data['account']
 				password = person_login_form.cleaned_data['password']
+				md5 = hashlib.md5()
+				md5.update((account+password).encode('utf-8'))
+				password = md5.hexdigest()
 				person = Person.objects.filter(account__exact=account,password__exact=password)
+				print(person)
 				if person:
 					person = person[0]
 					#response = HttpResponseRedirect('home')
@@ -52,8 +57,11 @@ def log(req):
 				account = person_logup_form.cleaned_data['account']
 				name = person_logup_form.cleaned_data['true_name']
 				password = person_logup_form.cleaned_data['password']
+				md5 = hashlib.md5()
+				md5.update((account+password).encode('utf-8'))
+				password = md5.hexdigest()
 				person = Person.objects.filter(account__exact=account)
-				if person:
+				if not person:
 					person = Person.objects.create(account=account,true_name=name,password=password)
 					response = HttpResponseRedirect(reverse('home'))
 					response.set_cookie('person_id',person.id,3600)
@@ -66,6 +74,9 @@ def log(req):
 			if company_login_form.is_valid():
 				account = company_login_form.cleaned_data['account']
 				password = company_login_form.cleaned_data['password']
+				md5 = hashlib.md5()
+				md5.update((account+password).encode('utf-8'))
+				password = md5.hexdigest()
 				company = Company.objects.filter(account__exact=account,password__exact=password)
 				if company:
 					company = company[0]
@@ -81,8 +92,11 @@ def log(req):
 				account = company_logup_form.cleaned_data['account']
 				name = company_logup_form.cleaned_data['name']
 				password = company_logup_form.cleaned_data['password']
+				md5 = hashlib.md5()
+				md5.update((account+password).encode('utf-8'))
+				password = md5.hexdigest()
 				company = Company.objects.filter(account__exact=account)
-				if company:
+				if not company:
 					company = Company.objects.create(account=account,name=name,password=password)
 					response = HttpResponseRedirect(reverse('home'))
 					response.set_cookie('company_id',company.id,3600)
@@ -127,6 +141,11 @@ def job(req,id):
 		collected = person.collection.filter(id=id)
 		applied = person.app_record.filter(id=id)
 	company_name = req.COOKIES.get('company_name',None)
+	if company_name:
+		company_id = req.COOKIES.get('company_id')
+		company = Company.objects.get(id=company_id)
+		attributed = company.job_set.filter(id=id)
+		app_progress_list = job.app_progress_set.all()
 	return render(req,'job.html',locals())
 
 def cv(req,id):
@@ -135,6 +154,16 @@ def cv(req,id):
 	company_name = req.COOKIES.get('company_name',None)
 	return render(req,'cv.html',locals())
 
+def person_view(req,id):
+	person_name = req.COOKIES.get('person_name',None)
+	if not person_name:
+		company_name = req.COOKIES.get('company_name',None)
+	person = Person.objects.filter(id=id)[0]
+	return render(req,'person_view.html',locals())
+
+def company_view(req,id):
+	company = Company.objects.filter(id=id)[0]
+	return render(req,'company_view.html',locals())
 
 # person user views
 def get_person(func):
@@ -206,7 +235,7 @@ def cv_change(req,person,id):
 			cv.save()
 		return HttpResponseRedirect(reverse('cv',kwargs={'id':cv.id}))
 
-def job_collect(req,person,id):
+def job_collect_add(req,person,id):
 	job = Job.objects.filter(id=id)
 	if job:
 		job = job[0]
@@ -214,17 +243,57 @@ def job_collect(req,person,id):
 		return HttpResponse('ok')
 	else:
 		return HttpResponse('wrong job id')
+
+def job_collect_add_mary(req,person):
+	if req.method == 'POST':
+		if req.POST.has_key('ids'):
+			data = req.POST['ids']
+			ids = data.split('@')
+			del data
+			for id in ids:
+				job = Job.objects.filter(id=id)[0]
+				person.collection.add(job)
+	return HttpResponse('ok')
+
+def job_collect_delete(req,person,id):
+	job = Job.objects.filter(id=id)
+	if job:
+		job = job[0]
+		person.collection.remove(job)
+		return HttpResponse('ok')
+	#	return HttpResponseRedirect(reverse('person'))
+	else:
+		return HttpResponse('wrong job id')
 	
 def job_apply(req,person,id):
 	job = Job.objects.filter(id=id)
 	if job:
 		job = job[0]
-		progress = App_progress(person=person,job=job)
-		person.app_progress_set.add(progress)
+		progress,new = App_progress.objects.get_or_create(person=person,job=job)
+		if new:
+			person.app_progress_set.add(progress)
 		return HttpResponse('ok')
 	else:
 		return HttpResponse('wrong job id')
-	
+
+def job_apply_delete(req,person,id):
+	job = Job.objects.filter(id=id)[0]
+	progress = App_progress.objects.filter(person=person,job=job)[0]
+	progress.delete()
+	del progress
+	return HttpResponse('ok')
+
+def job_apply_mary(req,person):
+	if req.method == 'POST':
+		if req.POST.has_key('ids'):
+			ids = req.POST['ids']
+			ids = ids.split('@')
+			for id in ids:
+				job = Job.objects.filter(id=id)[0]
+				progress,new = App_progress.objects.get_or_create(person=person,job=job)
+				if new:
+					person.app_progress_set.add(progress)
+			return HttpResponse('ok')
 
 
 # company user views
@@ -309,6 +378,29 @@ def job_change(req,company,id):
 		job_form = JobForm(instance=job)
 	submit = '修改'
 	return render(req,'job_form.html',locals())
+
+def job_app_progress(req,company):
+	if req.method == 'POST':
+		progress = App_progress.objects.filter(person__id=req.POST['person_id'],job__id=req.POST['job_id'])[0]
+		if progress.progress == App_progress.APPLICATED:
+			progress.progress = App_progress.SCANNED
+		elif progress.progress == App_progress.SCANNED:
+			progress.progress = App_progress.INTERVIEW
+		elif progress.progress == App_progress.INTERVIEW:
+			progress.progress = App_progress.OFFER
+		progress.save()
+	return HttpResponse(progress.get_progress_display())
+
+#def job_apply_list(req,company,id):
+#	person_name = req.COOKIES.get('person_name',None)
+#	if not person_name:
+#		company_name = req.COOKIES.get('company_name',None)
+#	job = Job.objects.filter(id=id)[0]
+#	app_progress_list = job.app_progress_set.all()
+#	return render(req,'job_apply_list.html',locals())
+
+
+
 def home(req):
 	person_name = req.COOKIES.get('person_name',None)
 	if not person_name:
@@ -335,10 +427,17 @@ def home(req):
 		return render(req,'job_search.html',locals())
 	elif req.GET.has_key('company_key'):
 		key = req.GET['company_key']
-		companylist = Company.objects.filter(name__icontains=key)
+		allcompany = Company.objects.filter(name__icontains=key)
+		paginator = Paginator(allcompany,8)
+		page = req.GET.get('page')
+		try:
+			companylist = paginator.page(page)
+		except PageNotAnInteger:
+			companylist = paginator.page(1)
+		except EmptyPage:
+			companylist = paginator.page(paginator.num_pages)
 		return render(req,'company_search.html',locals())
 	else:
-		print('home')
 		return render(req,'home.html',locals())
 
 

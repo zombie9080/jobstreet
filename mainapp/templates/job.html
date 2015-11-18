@@ -12,7 +12,7 @@ job
 			years: {{job.get_years_display}}<br>
 			salary: {{job.get_salary_display}}<br>
 			count: {{job.count}}<br>
-			create_date: {{job.create_date}}<br>
+			create_date: {{job.create_date|date:"m/d/Y"}}<br>
 			company: {{job.company}}<hr>
 			tags:
 			{% for tag in job.tags.all %}
@@ -41,7 +41,8 @@ job
 			<div class='job_apply_list'>
 				{% for app_progress in app_progress_list %}
 				<div>
-					<a href='{% url 'person_view' id=app_progress.person.id %}' class='col-md-3'>{{app_progress.person}}</a><span class='col-md-3'> {{app_progress.get_progress_display}}</span>
+					<a href='{% url 'person_view' id=app_progress.person.id %}' class='col-md-3'>{{app_progress.person}}</a>
+					<span name='{{app_progress.person.id}}' class='col-md-3'> {{app_progress.get_progress_display}}</span>
 					{% if app_progress.progress == "ap" %}
 					<a class='scan' name='{{app_progress.person.id}}'>标记已阅</a>
 					<a class='interview' style="display: none;" name='{{app_progress.person.id}}'>安排面试</a>
@@ -85,20 +86,32 @@ $(function(){
 {% endif %}
 {% if company_name %}
 $(function(){
-	// fix it
 	$('.job_apply_list a.scan').click(function(){
-		$(this).hide();
-		$(this).next().show();
-	//	$.post(url,{},function(){});	
-	});
-	$('.job_apply_list a.interview').click(function(){
-		$(this).hide();
-		$(this).next().show();
-	//	$.post(url,{},function(){});	
-	});
-	$('.job_apply_list a.offer').click(function(){
-		$(this).hide();
-	//	$.post(url,{},function(){});	
+		var job_id = {{job.id}};
+		var person_id = $(this).attr('name');
+		$.post('{% url "job_app_progress" %}',{'job_id':job_id,'person_id':person_id},function(data){
+			$('.job_apply_list span[name='+person_id+']').text(data);
+			$('.job_apply_list a.scan[name='+person_id+']').hide().next().show();
+		});	
+		$('.job_apply_list a.interview').click(function(){
+			var job_id = {{job.id}};
+			var person_id = $(this).attr('name');
+			$.post('{% url "job_app_progress" %}',{'job_id':job_id,'person_id':person_id},function(data){
+				$('.job_apply_list span[name='+person_id+']').text(data);
+				$('.job_apply_list a.interview[name='+person_id+']').hide().next().show();
+			});
+			$('.job_apply_list a.offer').click(function(){
+				var job_id = {{job.id}};
+				var person_id = $(this).attr('name');
+				$.post('{% url "job_app_progress" %}',{'job_id':job_id,'person_id':person_id},function(data){
+					$('.job_apply_list span[name='+person_id+']').text(data);
+					$('.job_apply_list a.offer[name='+person_id+']').hide().next().show();
+				});
+				$(this).off('click');
+			});
+			$(this).off('click');
+		});
+		$(this).off('click');
 	});
 });
 {% endif %} 
